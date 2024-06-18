@@ -45,7 +45,7 @@ jobs:
 
         - name: Commit and Push Changes
           run: |
-            git remote set-url origin https://github.com/jain-nabhi966/Webtech-Project
+            git remote set-url origin https://github.com/jain-nabhi966/Webtech-Project.git
             git add .
             git commit -m "Automated deployment commit"
             git push
