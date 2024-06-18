@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -31,21 +31,37 @@ jobs:
         with:
           name: production-files
           path: ./build
+
   deploy:
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    needs: build  # Ensure deployment runs after successful build
 
-      steps:
-        - name: Checkout Repo
-          uses: actions/checkout@v2
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
 
-        - name: Set up Git
-          run: |
-            git config --global user.email "jain.nabhi966@gmail.com"
-            git config --global user.name "GitHub Actions"
+      - name: Set up Git
+        run: |
+          git config --global user.email "jain.nabhi966@gmail.com"
+          git config --global user.name "GitHub Actions"
 
-        - name: Commit and Push Changes
-          run: |
-            git remote set-url origin https://github.com/jain-nabhi966/Webtech-Project.git
-            git add .
-            git commit -m "Automated deployment commit"
-            git push
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git status --porcelain
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes detected. Exiting."
+            exit 0
+          else
+            echo "Changes detected. Proceeding with commit."
+          fi
+
+      - name: Set Git Remote URL
+        run: git remote set-url origin https://github.com/jain-nabhi966/Webtech-Project.git || true
+
+      - name: Commit and Push Changes
+        if: steps.check_changes.outputs.result == 'Changes detected. Proceeding with commit.'
+        run: |
+          git add .
+          git commit -m "Automated deployment commit"
+          git push
