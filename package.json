@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "echo 'Building the project...'"  // Replace this with your actual build command
   },
   "author": "",
   "license": "ISC",
