@@ -31,13 +31,20 @@ jobs:
         with:
           name: production-files
           path: ./build
-
   deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: production-files
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout Repo
+          uses: actions/checkout@v2
+
+        - name: Set up Git
+          run: |
+            git config --global user.email "jain.nabhi966@gmail.com"
+            git config --global user.name "GitHub Actions"
+
+        - name: Commit and Push Changes
+          run: |
+            git add .
+            git commit -m "Automated deployment commit"
+            git push
