@@ -28,7 +28,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
-          script: |
-            mkdir -p /var/www/myapp
-            scp -r ./build/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/myapp/build
-            ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'cd /var/www/myapp/build && npm install --production && npm run start'
+        run: |
+          mkdir -p /var/www/myapp
+          scp -r ./build/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/myapp/build
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'cd /var/www/myapp/build && npm install --production && npm run start'
