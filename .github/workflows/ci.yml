@@ -25,6 +25,6 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          mkdir -p /var/www/myapp
+          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST 'sudo mkdir -p /var/www/myapp'
           scp -r ./build/* $EC2_USER@$EC2_HOST:/var/www/myapp/build
           ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST 'cd /var/www/myapp/build && npm install --production && npm run start'
