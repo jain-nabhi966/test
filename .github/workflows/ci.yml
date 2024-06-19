@@ -40,28 +40,32 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
-      - name: Set up Git
-        run: |
-          git config --global user.email "jain.nabhi966@gmail.com"
-          git config --global user.name "GitHub Actions"
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: production-files
+          path: ./build
 
-      - name: Check for changes
-        id: check_changes
+      - name: Copy files to EC2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USER: ubuntu
+          EC2_HOST: ec2-3-90-108-130.compute-1.amazonaws.com
         run: |
-          git status --porcelain
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "No changes detected. Exiting."
-            exit 0
-          else
-            echo "Changes detected. Proceeding with commit."
-          fi
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          scp -r -o StrictHostKeyChecking=no ./build/* $EC2_USER@$EC2_HOST:/var/www/myapp/build
 
-      - name: Set Git Remote URL
-        run: git remote set-url origin https://github.com/jain-nabhi966/Webtech-Project.git || true
-
-      - name: Commit and Push Changes
-        if: steps.check_changes.outputs.result == 'Changes detected. Proceeding with commit.'
+      - name: Deploy on EC2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USER: ubuntu
+          EC2_HOST: ec2-3-90-108-130.compute-1.amazonaws.com
         run: |
-          git add .
-          git commit -m "Automated deployment commit"
-          git push
+          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+            cd /var/www/myapp/build
+            # Run your deployment commands here, for example:
+            npm install --production
+            npm run start
+          EOF
