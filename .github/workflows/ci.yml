@@ -28,7 +28,7 @@ jobs:
         run: ls -alh ./
 
       - name: Deploy to EC2
-        uses: easingthemes/ssh-deploy@v2.1.5
+        uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           SOURCE: "./"  # Adjust the source directory as per your build output
