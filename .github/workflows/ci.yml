@@ -55,19 +55,18 @@ jobs:
           if [ -d "$BUILD_DIR" ]; then
             scp -o StrictHostKeyChecking=no -r $BUILD_DIR/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/myapp/build
             ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-cd /home/ubuntu/myapp/build
-# Install pm2 if not already installed
-if ! command -v pm2 &> /dev/null
-then
-  npm install -g pm2
-fi
-# Install production dependencies
-npm install --production
-# Restart the application using pm2
-pm2 delete all || true
-pm2 start npm --name "myapp" -- run start
-EOF
+            cd /home/ubuntu/myapp/build
+            # Install pm2 if not already installed
+            if ! command -v pm2 &> /dev/null
+            then
+              npm install -g pm2
+            fi
+            # Install production dependencies
+            npm install --production
+            # Restart the application using pm2
+            pm2 delete all || true
+            pm2 start npm --name "myapp" -- run start
+            EOF
           else
             echo "Build directory not found. Deployment skipped."
             exit 1
-          fi
