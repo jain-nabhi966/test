@@ -17,15 +17,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Clone Another Repository
-        run: |
-          git clone https://github.com/your-username/another-repo.git
-          cd another-repo
-          npm install
-          npm run build
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
 
       - name: List Build Directory
-        run: ls -alh ./another-repo/build
+        run: ls -alh ./build
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -42,7 +41,7 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          scp -o StrictHostKeyChecking=no -r ./another-repo/build/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/build
+          scp -o StrictHostKeyChecking=no -r ./build/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/build
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           cd /home/ubuntu/build
           # Install pm2 if not already installed
