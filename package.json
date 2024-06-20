@@ -2,9 +2,9 @@
   "name": "node-cicd-sample",
   "version": "1.0.0",
   "description": "A sample Node.js project for CI/CD pipeline testing",
-  "main": "app.js",
+  "main": "mins.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node mins.js",
     "test": "jest",
     "build": "echo 'Building the project...'",
     "predeploy": "node -e 'const add = require(\"./add\"); if (add(1, 2) !== 3) throw new Error(\"Test failed\");'"
