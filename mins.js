@@ -1,5 +1,5 @@
 function add(a, b) {
-    return a / b;  // Division instead of addition
+    return a + b;
 }
 
 module.exports = add;
