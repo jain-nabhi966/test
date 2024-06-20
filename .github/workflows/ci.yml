@@ -25,13 +25,13 @@ jobs:
         run: npm run build
 
       - name: List Build Directory
-        run: ls -alh ./build
+        run: ls -alh ./
 
       - name: Deploy to EC2
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SOURCE: "./build"  # Adjust the source directory as per your build output
+          SOURCE: "./"  # Adjust the source directory as per your build output
           REMOTE_HOST: ${{ secrets.EC2_HOST }}  # Replace with your EC2 instance host
           REMOTE_USER: ${{ secrets.EC2_USER }}  # Replace with your EC2 instance username
           TARGET: "/home/ubuntu/myapp"  # Replace with your target directory on EC2
