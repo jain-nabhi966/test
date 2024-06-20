@@ -7,7 +7,7 @@
     "start": "node mins.js",
     "test": "jest",
     "build": "echo 'Building the project...'",
-    "predeploy": "node -e 'const add = require(\"./add\"); if (add(1, 2) !== 3) throw new Error(\"Test failed\");'"
+    "predeploy": "node predeploy.js"
   },
   "author": "Your Name",
   "license": "ISC",
