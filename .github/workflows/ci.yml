@@ -11,6 +11,7 @@ on:
 
 jobs:
   build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -23,50 +24,15 @@ jobs:
       - name: Build Project
         run: npm run build
 
-      - name: List Root Directory
-        run: ls -alh
-
-      - name: List Potential Build Directories
-        run: |
-          echo "Listing ./build directory:"
-          ls -alh ./build || echo "./build directory does not exist"
-          echo "Listing ./dist directory:"
-          ls -alh ./dist || echo "./dist directory does not exist"
-
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-
-      - name: Debug SSH Connection
-        run: |
-          echo "Testing SSH connection"
-          ssh -o StrictHostKeyChecking=no -vvv ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} echo "SSH connection established"
+      - name: List Build Directory
+        run: ls -alh ./build
 
       - name: Deploy to EC2
+        uses: easingthemes/ssh-deploy@v2.1.5
         env:
-          EC2_USER: ${{ secrets.EC2_USER }}
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-        run: |
-          BUILD_DIR=./build
-          if [ ! -d "$BUILD_DIR" ]; then
-            BUILD_DIR=./dist
-          fi
-          if [ -d "$BUILD_DIR" ]; then
-            scp -o StrictHostKeyChecking=no -r $BUILD_DIR/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/myapp/build
-            ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /home/ubuntu/myapp/build
-            # Install pm2 if not already installed
-            if ! command -v pm2 &> /dev/null; then
-              npm install -g pm2
-            fi
-            # Install production dependencies
-            npm install --production
-            # Restart the application using pm2
-            pm2 delete all || true
-            pm2 start npm --name "myapp" -- run start
-          EOF
-          else
-            echo "Build directory not found. Deployment skipped."
-            exit 1
-          fi
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SOURCE: "./build"  # Adjust the source directory as per your build output
+          REMOTE_HOST: ${{ secrets.EC2_HOST }}  # Replace with your EC2 instance host
+          REMOTE_USER: ${{ secrets.EC2_USER }}  # Replace with your EC2 instance username
+          TARGET: "/home/ubuntu/myapp"  # Replace with your target directory on EC2
+
