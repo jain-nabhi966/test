@@ -1,13 +1,15 @@
 {
   "name": "node-cicd-sample",
   "version": "1.0.0",
-  "description": "",
+  "description": "A sample Node.js project for CI/CD pipeline testing",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "jest",
-    "build": "echo 'Building the project...'"
+    "build": "echo 'Building the project...'",
+    "predeploy": "node -e 'const add = require(\"./add\"); if (add(1, 2) !== 3) throw new Error(\"Test failed\");'"
   },
-  "author": "",
+  "author": "Your Name",
   "license": "ISC",
   "devDependencies": {
     "jest": "^27.0.0"
