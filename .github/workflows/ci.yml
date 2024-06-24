@@ -24,7 +24,6 @@ jobs:
       - name: Build Project
         run: |
           npm run build
-          npm run predeploy
 
       - name: List Build Directory
         run: ls -alh ./
