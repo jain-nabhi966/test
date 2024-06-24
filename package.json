@@ -5,9 +5,7 @@
   "main": "mins.js",
   "scripts": {
     "start": "node mins.js",
-    "test": "jest",
-    "build": "echo 'Building the project...'",
-    "predeploy": "node predeploy.js"
+    "build": "echo 'Building the project...'"
   },
   "author": "Your Name",
   "license": "ISC",
