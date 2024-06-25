@@ -34,6 +34,7 @@ jobs:
         run: ls -alh ./
 
       - name: Deploy to EC2
+        id: deploy
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
@@ -44,30 +45,22 @@ jobs:
 
       - name: Send mail on failure
         if: failure()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job failed
-          to: mrjain1701@gmail.com
-          from: Lendbox
-          body: |
-            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
+        run: |
+          echo "Build job of jain-nabhi966/test failed. Logs:" > failure-log.txt
+          echo "==============================================" >> failure-log.txt
+          tail -n 1000 $GITHUB_WORKSPACE/*.log >> failure-log.txt  # Adjust the log file extension as per your setup
+          echo "" >> failure-log.txt
+          echo "Please check the CI/CD pipeline logs for details." >> failure-log.txt
+          cat failure-log.txt
+          |
+          mail -s "Github Actions job failed" mrjain1701@gmail.com < failure-log.txt
 
       - name: Send mail on success
         if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job succeed
-          to: mrjain1701@gmail.com
-          from: Lendbox
-          body: |
-            Build job of jain-nabhi966/test succeed.
+        run: |
+          echo "Build job of jain-nabhi966/test succeeded." > success-log.txt
+          echo "" >> success-log.txt
+          echo "No further action required." >> success-log.txt
+          cat success-log.txt
+          |
+          mail -s "Github Actions job succeeded" mrjain1701@gmail.com < success-log.txt
