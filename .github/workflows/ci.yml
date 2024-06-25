@@ -33,19 +33,10 @@ jobs:
       - name: List Build Directory
         run: ls -alh ./
 
-      - name: Deploy to EC2
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SOURCE: "./"
-          REMOTE_HOST: ${{ secrets.EC2_HOST }}
-          REMOTE_USER: ${{ secrets.EC2_USER }}
-          TARGET: "/home/ubuntu/myapp"
-
       - name: Prepare Email Body
         id: prepare-email
         run: |
-          if [ ${{ job.status }} == 'success' ]; then
+          if [ "${{ job.status }}" == "success" ]; then
             echo "Build job of jain-nabhi966/test succeeded." > email-body.txt
           else
             echo "Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details." > email-body.txt
@@ -54,9 +45,13 @@ jobs:
             tail -n 10000 $GITHUB_WORKSPACE/runner.log >> email-body.txt
           fi
 
+      - name: Debug Email Body Content
+        run: |
+          ls -alh $GITHUB_WORKSPACE
+          cat email-body.txt
 
-      - name: Send mail on failure
-        if: failure()
+      - name: Send Email Notification
+        if: always()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -64,23 +59,9 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job failed
+          subject: |
+            ${{ job.status == 'success' && 'Github Actions job succeeded' || 'Github Actions job failed' }}
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            ${{ steps.prepare-email.outputs.email_body }}
-
-      - name: Send mail on success
-        if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job succeeded
-          to: mrjain1701@gmail.com
-          from: Lendbox
-          body: |
-            ${{ steps.prepare-email.outputs.email_body }}
+            $(cat email-body.txt)
