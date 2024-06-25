@@ -2,7 +2,7 @@
   "name": "node-cicd-sample",
   "version": "1.0.0",
   "description": "A sample Node.js project for CI/CD pipeline testing",
-  "main": "mins.js",  // Assuming mins.js is your main entry point
+  "main": "mins.js",
   "scripts": {
     "lint": "eslint .",
     "start": "node mins.js",
