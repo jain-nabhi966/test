@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Run Linter
-        uses: wearerequired/lint-action@v2
+        uses: npx --yes gh-actions-linter@v0.1.8
         with:
           annotations: false
 
