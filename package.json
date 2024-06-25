@@ -4,8 +4,8 @@
   "description": "A sample Node.js project for CI/CD pipeline testing",
   "main": "mins.js",
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --config .eslintrc.js",
+    "lint:fix": "eslint . --fix --config .eslintrc.js",
     "start": "node mins.js",
     "build": "echo 'Building the project...'",
     "check-circular-deps": "madge --circular .",
