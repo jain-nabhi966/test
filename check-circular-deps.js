@@ -37,7 +37,7 @@ function findCircularDependencies(startModule, visited = new Set(), pathStack = 
 }
 
 // Example usage: Check circular dependencies starting from main.js
-const circularPath = findCircularDependencies('./main.js');
+const circularPath = findCircularDependencies('./');
 
 if (circularPath) {
     console.error('Circular dependency found:');
