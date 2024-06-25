@@ -71,4 +71,3 @@ jobs:
           from: Lendbox
           body: |
             ${{ steps.email-notification.outputs.email_body }}
-
