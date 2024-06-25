@@ -42,32 +42,12 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_USER }}
           TARGET: "/home/ubuntu/myapp"
 
-      - name: Send mail on failure
-        if: failure()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job failed
-          to: mrjain1701@gmail.com
-          from: Lendbox
-          body: |
-            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
-
-      - name: Send mail on success
+      - name: Send Discord Notification on Success
         if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job succeed
-          to: mrjain1701@gmail.com
-          from: Lendbox
-          body: |
-            Build job of jain-nabhi966/test succeed.
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{"content": "Build job of jain-nabhi966/test succeeded."}' ${{ secrets.DISCORD_WEBHOOK_SUCCESS }}
+
+      - name: Send Discord Notification on Failure
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{"content": "Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.\n\n-------- CI/CD Pipeline Logs --------\n$(tail -n 1000 $GITHUB_WORKSPACE/runner.log)"}' ${{ secrets.DISCORD_WEBHOOK_FAILURE }}
