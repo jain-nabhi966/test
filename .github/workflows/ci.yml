@@ -32,6 +32,9 @@ jobs:
       - name: Build Project
         run: npm run build
 
+      - name: Check for Circular Dependencies
+        run: npm run check-circular-deps
+
       - name: List Build Directory
         run: ls -alh ./
 
