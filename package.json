@@ -5,9 +5,11 @@
   "main": "mins.js",
   "scripts": {
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "start": "node mins.js",
     "build": "echo 'Building the project...'",
-    "check-circular-deps": "madge --circular ."
+    "check-circular-deps": "madge --circular .",
+    "test": "echo 'No tests specified'"
   },
   "author": "Your Name",
   "license": "ISC",
