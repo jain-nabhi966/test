@@ -18,19 +18,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
       - name: Install Dependencies
         run: npm install
 
       - name: Run Linter
-        run: npm run lint -- --fix
+        run: npm run lint
 
       - name: Check for Circular Dependencies
-        run: node check-circular-deps.js
+        run: npm run check-circular-deps
 
       - name: Build Project
         run: npm run build
@@ -60,7 +55,7 @@ jobs:
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job failed for branch ${{ github.ref }} of repository ${{ github.repository }}. Please check the CI/CD pipeline logs for details.
+            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
 
       - name: Send mail on success
         if: success()
@@ -71,8 +66,8 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job succeeded
+          subject: Github Actions job succeed
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job succeeded for branch ${{ github.ref }} of repository ${{ github.repository }}.
+            Build job of jain-nabhi966/test succeed.
