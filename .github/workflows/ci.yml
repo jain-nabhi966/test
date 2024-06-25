@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Run Linter
-        run: npx --yes gh-actions-linter@v0.1.8
+        run: npm run lint -- --fix
 
       - name: Check for Circular Dependencies
         run: npm run check-circular-deps
@@ -34,7 +34,7 @@ jobs:
         run: ls -alh ./
 
       - name: Deploy to EC2
-        uses: easingthemes/ssh-deploy@main
+        uses: easingthemes/ssh-deploy@6d9c855f898abc2647afbd20c6e0e6d616c01de8
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           SOURCE: "./"
@@ -42,20 +42,9 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_USER }}
           TARGET: "/home/ubuntu/myapp"
 
-      - name: Send Discord Notification on Success
-        if: success()
-        run: |
-          curl -H "Content-Type: application/json" -X POST -d '{"content": "Build job of jain-nabhi966/test succeeded."}' ${{ secrets.DISCORD_WEBHOOK_SUCCESS }}
-
-      - name: Send Discord Notification on Failure
-        if: failure()
-        run: |
-          LOGS=$(tail -n 1000 $GITHUB_WORKSPACE/_github/workflow/logs)
-          curl -H "Content-Type: application/json" -X POST -d "{\"content\": \"Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.\n\n-------- CI/CD Pipeline Logs --------\n\`\`\`${LOGS}\`\`\`\"}" ${{ secrets.DISCORD_WEBHOOK_FAILURE }}
-
       - name: Send mail on failure
         if: failure()
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@08c4b5e1f425d7b690de3a11a1c2d4ed5c6b3baf
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -70,7 +59,7 @@ jobs:
 
       - name: Send mail on success
         if: success()
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@08c4b5e1f425d7b690de3a11a1c2d4ed5c6b3baf
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -81,4 +70,4 @@ jobs:
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job of jain-nabhi966/test succeeded.
+            Build job of jain-nabhi966/test succeed.
