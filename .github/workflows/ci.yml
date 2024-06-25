@@ -21,15 +21,19 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Check for Circular Dependencies
+        run: npm run check-circular-deps
+
       - name: Build Project
-        run: |
-          npm run build
+        run: npm run build
 
       - name: List Build Directory
         run: ls -alh ./
 
       - name: Deploy to EC2
-        if: success()
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
