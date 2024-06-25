@@ -42,18 +42,12 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_USER }}
           TARGET: "/home/ubuntu/myapp"
 
-      - name: Send Discord Notification on Failure
-        if: failure()
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          channel-id: ${{ secrets.DISCORD_FAILURE_CHANNEL }}
-          text: |
-            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
-
       - name: Send Discord Notification on Success
         if: success()
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          channel-id: ${{ secrets.DISCORD_SUCCESS_CHANNEL }}
-          text: |
-            Build job of jain-nabhi966/test succeeded.
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{"content": "Build job of jain-nabhi966/test succeeded."}' ${{ secrets.DISCORD_WEBHOOK_SUCCESS }}
+
+      - name: Send Discord Notification on Failure
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{"content": "Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.\n\n-------- CI/CD Pipeline Logs --------\n$(tail -n 1000 $GITHUB_WORKSPACE/runner.log)"}' ${{ secrets.DISCORD_WEBHOOK_FAILURE }}
