@@ -66,8 +66,8 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job failed
+          subject: Github Actions job succeed
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
+            Build job of jain-nabhi966/test succeed.
