@@ -58,6 +58,5 @@ jobs:
             Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
 
       - name: Send mail on success
-        if: success()
         run: echo "Build job of jain-nabhi966/test completed successfully!"
 
