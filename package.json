@@ -7,7 +7,7 @@
     "lint": "eslint .",
     "start": "node mins.js",
     "build": "echo 'Building the project...'",
-    "check-circular-deps": "madge --circular ./mins.js"
+    "check-circular-deps": "madge --circular ."
   },
   "author": "Your Name",
   "license": "ISC",
