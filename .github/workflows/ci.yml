@@ -50,4 +50,7 @@ jobs:
       - name: Send Discord Notification on Failure
         if: failure()
         run: |
-          curl -H "Content-Type: application/json" -X POST -d '{"content": "Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.\n\n-------- CI/CD Pipeline Logs --------\n$(tail -n 1000 $GITHUB_WORKSPACE/runner.log)"}' ${{ secrets.DISCORD_WEBHOOK_FAILURE }}
+          # Capture the logs into a variable
+          LOGS=$(tail -n 1000 $GITHUB_WORKSPACE/_github/workflow/logs)
+          # Send the notification
+          curl -H "Content-Type: application/json" -X POST -d "{\"content\": \"Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.\n\n-------- CI/CD Pipeline Logs --------\n\`\`\`${LOGS}\`\`\`\"}" ${{ secrets.DISCORD_WEBHOOK_FAILURE }}
