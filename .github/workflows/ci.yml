@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Run Linter
-        run: npm run lint -- --fix
+        run: npm run lint:fix
 
       - name: Check for Circular Dependencies
         run: npm run check-circular-deps
@@ -66,7 +66,7 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job succeed
+          subject: Github Actions job succeeded
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
