@@ -1,9 +1,8 @@
 function add(a, b) {
-  if (typeof a !== "number" || typeof b !== "number") { // Intentional error: double quotes instead of single quotes
-    throw new Error("Both parameters must be numbers") // Intentional error: missing semi-colon
-    }
-    return a + b // Intentional error: incorrect indentation
+  if (typeof a !== 'number' || typeof b !== 'number') {
+    throw new Error('Both parameters must be numbers'); // This will trigger a quotes error
+  }
+  return a + b; // This should trigger an indentation and semi-colon error
 }
 
-module.exports = add // Intentional error: missing semi-colon
-//nabhi jain lendbox
+module.exports = add;
