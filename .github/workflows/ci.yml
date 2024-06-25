@@ -34,7 +34,7 @@ jobs:
         run: ls -alh ./
 
       - name: Deploy to EC2
-        uses: easingthemes/ssh-deploy@6d9c855f898abc2647afbd20c6e0e6d616c01de8
+        uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           SOURCE: "./"
@@ -44,7 +44,7 @@ jobs:
 
       - name: Send mail on failure
         if: failure()
-        uses: dawidd6/action-send-mail@08c4b5e1f425d7b690de3a11a1c2d4ed5c6b3baf
+        uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -59,7 +59,7 @@ jobs:
 
       - name: Send mail on success
         if: success()
-        uses: dawidd6/action-send-mail@08c4b5e1f425d7b690de3a11a1c2d4ed5c6b3baf
+        uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -70,4 +70,4 @@ jobs:
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job of jain-nabhi966/test succeed.
+            Build job of jain-nabhi966/test succeeded.
