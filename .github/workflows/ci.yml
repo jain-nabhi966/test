@@ -47,6 +47,7 @@ jobs:
           fi
 
       - name: Debug Email Body Content
+        if: always()
         run: |
           ls -alh $GITHUB_WORKSPACE
           cat email-body.txt
