@@ -10,24 +10,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint-and-build:
-    name: Lint and Build
+  build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
       - name: Install Dependencies
         run: npm install
 
-      - name: Run Linter and Fix Issues
-        run: npm run lint
+      - name: Run Linter
+        run: npm run lint -- --fix
 
       - name: Check for Circular Dependencies
         run: npm run check-circular-deps
@@ -38,7 +33,14 @@ jobs:
       - name: List Build Directory
         run: ls -alh ./
 
-      # Add deployment steps or other actions as needed
+      - name: Deploy to EC2
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SOURCE: "./"
+          REMOTE_HOST: ${{ secrets.EC2_HOST }}
+          REMOTE_USER: ${{ secrets.EC2_USER }}
+          TARGET: "/home/ubuntu/myapp"
 
       - name: Send mail on failure
         if: failure()
@@ -53,7 +55,7 @@ jobs:
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job failed for branch ${{ github.ref }} of repository ${{ github.repository }}. Please check the CI/CD pipeline logs for details.
+            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
 
       - name: Send mail on success
         if: success()
@@ -64,8 +66,8 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job succeeded
+          subject: Github Actions job succeed
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job succeeded for branch ${{ github.ref }} of repository ${{ github.repository }}.
+            Build job of jain-nabhi966/test succeed.
