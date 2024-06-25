@@ -42,8 +42,7 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_USER }}
           TARGET: "/home/ubuntu/myapp"
 
-      - name: Send mail on failure
-        if: failure()
+      - name: Send mail
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -51,12 +50,8 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job failed
+          subject: Github Actions job result
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
-
-      - name: Send mail on success
-        run: echo "Build job of jain-nabhi966/test completed successfully!"
-
+            Build job of jain-nabhi966/test completed successfully!
