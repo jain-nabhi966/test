@@ -2,12 +2,12 @@
   "name": "node-cicd-sample",
   "version": "1.0.0",
   "description": "A sample Node.js project for CI/CD pipeline testing",
-  "main": "mins.js",
+  "main": "mins.js",  // Assuming mins.js is your main entry point
   "scripts": {
     "lint": "eslint .",
     "start": "node mins.js",
     "build": "echo 'Building the project...'",
-    "check-circular-deps": "madge --circular ./app.js"
+    "check-circular-deps": "madge --circular ./mins.js"
   },
   "author": "Your Name",
   "license": "ISC",
