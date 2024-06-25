@@ -67,7 +67,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Github Actions job succeeded
-          to: mrjain1701@gmail.com
+          to: mrjain1701@gmail.com, e22bcau0053@bennett.edu.in, nabhi.jain@perannum.money
           from: Lendbox
           body: |
             Build job of jain-nabhi966/test succeeded.
