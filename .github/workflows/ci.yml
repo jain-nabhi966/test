@@ -50,21 +50,16 @@ jobs:
           echo "-------- CI/CD Pipeline Logs --------" >> email-body.txt
           tail -n 10000 $GITHUB_WORKSPACE/runner.log >> email-body.txt  # Adjust the number of lines as needed
           cat email-body.txt
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job failed
-          to: mrjain1701@gmail.com
-          from: Lendbox
-          body: |
-            $(cat email-body.txt)
+          echo "::set-output name=email_body::$(cat email-body.txt)"
 
       - name: Send mail on success
         if: success()
+        run: |
+          echo "Build job of jain-nabhi966/test succeeded." > email-body.txt
+          echo "::set-output name=email_body::$(cat email-body.txt)"
+
+      - name: Email notification
+        if: ${{ always() }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -72,9 +67,9 @@ jobs:
           secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job succeeded
+          subject: ${{ job.status == 'success' ? 'Github Actions job succeeded' : 'Github Actions job failed' }}
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job of jain-nabhi966/test succeeded.
+            ${{ steps.email-notification.outputs.email_body }}
 
