@@ -42,6 +42,19 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_USER }}
           TARGET: "/home/ubuntu/myapp"
 
+      - name: Prepare Email Body
+        if: always()
+        id: prepare-email
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "Build job of jain-nabhi966/test succeeded." > email-body.txt
+          else
+            echo "Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details." > email-body.txt
+            echo "" >> email-body.txt
+            echo "-------- CI/CD Pipeline Logs --------" >> email-body.txt
+            tail -n 1000 $GITHUB_WORKSPACE/runner.log >> email-body.txt
+          fi
+
       - name: Send mail on failure
         if: failure()
         uses: dawidd6/action-send-mail@v3
@@ -55,7 +68,7 @@ jobs:
           to: mrjain1701@gmail.com
           from: Lendbox
           body: |
-            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
+            $(cat email-body.txt)
 
       - name: Send mail on success
         if: success()
