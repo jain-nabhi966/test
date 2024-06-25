@@ -42,6 +42,17 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_USER }}
           TARGET: "/home/ubuntu/myapp"
 
+      - name: Send Discord Notification on Success
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{"content": "Build job of jain-nabhi966/test succeeded."}' ${{ secrets.DISCORD_WEBHOOK_SUCCESS }}
+
+      - name: Send Discord Notification on Failure
+        if: failure()
+        run: |
+          LOGS=$(tail -n 1000 $GITHUB_WORKSPACE/_github/workflow/logs)
+          curl -H "Content-Type: application/json" -X POST -d "{\"content\": \"Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.\n\n-------- CI/CD Pipeline Logs --------\n\`\`\`${LOGS}\`\`\`\"}" ${{ secrets.DISCORD_WEBHOOK_FAILURE }}
+
       - name: Send mail on failure
         if: failure()
         uses: dawidd6/action-send-mail@v3
