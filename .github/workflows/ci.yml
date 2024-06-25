@@ -29,11 +29,11 @@ jobs:
       - name: Run Linter and Fix Issues
         run: npm run lint
 
-      - name: Build Project
-        run: npm run build
-
       - name: Check for Circular Dependencies
         run: npm run check-circular-deps
+
+      - name: Build Project
+        run: npm run build
 
       - name: List Build Directory
         run: ls -alh ./
