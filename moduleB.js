@@ -12,4 +12,3 @@ module.exports = {
   }
 };
 
-moduleA.foo(); // Calling moduleA function from moduleB
