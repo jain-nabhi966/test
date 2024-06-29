@@ -46,7 +46,7 @@ jobs:
           elif [[ "$COMMIT_MSG" == *"[flexi]"* ]]; then
             TARGET_PATH="/home/ubuntu/flexi"
           else
-            TARGET_PATH="/home/ubuntu/default"
+            TARGET_PATH="/home/ubuntu/unknown_project"
           fi
           
           echo "TARGET_PATH=$TARGET_PATH" >> $GITHUB_ENV
