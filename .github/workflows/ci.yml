@@ -36,26 +36,33 @@ jobs:
       - name: Parse Commit Message
         id: parse_commit
         run: |
-          COMMIT_MSG=$(git log -1 --pretty=%B)
+          # Get the latest commit message and convert to lowercase
+          COMMIT_MSG=$(git log -1 --pretty=%B | tr '[:upper:]' '[:lower:]')
           echo "Commit message: $COMMIT_MSG"
           
+          # Determine the target path and source based on keywords in the commit message
           if [[ "$COMMIT_MSG" == *"[automation]"* ]]; then
             TARGET_PATH="/home/ubuntu/automation"
+            SOURCE_PATH="path/to/automation/files/*"
           elif [[ "$COMMIT_MSG" == *"[fixed]"* ]]; then
             TARGET_PATH="/home/ubuntu/fixed"
+            SOURCE_PATH="path/to/fixed/files/*"
           elif [[ "$COMMIT_MSG" == *"[flexi]"* ]]; then
             TARGET_PATH="/home/ubuntu/flexi"
+            SOURCE_PATH="path/to/flexi/files/*"
           else
-            TARGET_PATH="/home/ubuntu/unknown_project"
+            TARGET_PATH="/home/ubuntu/default"
+            SOURCE_PATH="path/to/default/files/*"
           fi
           
           echo "TARGET_PATH=$TARGET_PATH" >> $GITHUB_ENV
+          echo "SOURCE_PATH=$SOURCE_PATH" >> $GITHUB_ENV
 
       - name: Deploy to EC2
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SOURCE: "./"
+          SOURCE: ${{ env.SOURCE_PATH }}
           REMOTE_HOST: ${{ secrets.EC2_HOST }}
           REMOTE_USER: ${{ secrets.EC2_USER }}
           TARGET: ${{ env.TARGET_PATH }}
