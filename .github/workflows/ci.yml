@@ -33,6 +33,24 @@ jobs:
       - name: List Build Directory
         run: ls -alh ./
 
+      - name: Parse Commit Message
+        id: parse_commit
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MSG"
+          
+          if [[ "$COMMIT_MSG" == *"[automation]"* ]]; then
+            TARGET_PATH="/home/ubuntu/automation"
+          elif [[ "$COMMIT_MSG" == *"[fixed]"* ]]; then
+            TARGET_PATH="/home/ubuntu/fixed"
+          elif [[ "$COMMIT_MSG" == *"[flexi]"* ]]; then
+            TARGET_PATH="/home/ubuntu/flexi"
+          else
+            TARGET_PATH="/home/ubuntu/default"
+          fi
+          
+          echo "TARGET_PATH=$TARGET_PATH" >> $GITHUB_ENV
+
       - name: Deploy to EC2
         uses: easingthemes/ssh-deploy@main
         env:
@@ -40,8 +58,8 @@ jobs:
           SOURCE: "./"
           REMOTE_HOST: ${{ secrets.EC2_HOST }}
           REMOTE_USER: ${{ secrets.EC2_USER }}
-          TARGET: "/home/ubuntu/myapp"
-          
+          TARGET: ${{ env.TARGET_PATH }}
+
       - name: Send mail on failure
         if: failure()
         uses: dawidd6/action-send-mail@v3
