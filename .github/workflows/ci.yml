@@ -59,18 +59,14 @@ jobs:
           echo "TARGET_PATH=$TARGET_PATH" >> $GITHUB_ENV
           echo "SOURCE_PATH=$SOURCE_PATH" >> $GITHUB_ENV
 
-      - name: Prepare SSH Key
+      - name: Deploy to EC2
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > ssh_key
           chmod 600 ssh_key
+          scp -o StrictHostKeyChecking=no -i ssh_key -r ${{ env.SOURCE_PATH }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_PATH }}
+          ssh -o StrictHostKeyChecking=no -i ssh_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'pm2 restart all'
 
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ssh_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}
-          scp -o StrictHostKeyChecking=no -i ssh_key -r ${{ env.SOURCE_PATH }}/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_PATH }}
-          ssh -o StrictHostKeyChecking=no -i ssh_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cd ${{ env.TARGET_PATH }} && pm2 restart all"
-
-      - name: Clean Up
+      - name: Clean up
         run: rm ssh_key
 
       - name: Send mail on failure
