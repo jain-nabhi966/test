@@ -68,12 +68,13 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           REMOTE_HOST: ${{ secrets.EC2_HOST }}
           REMOTE_USER: ${{ secrets.EC2_USER }}
+          SCRIPT_AFTER: pm2 restart all
 
-      - name: Restart PM2
-        run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > ssh_key
-          chmod 600 ssh_key
-          ssh -o StrictHostKeyChecking=no -i ssh_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'pm2 restart all'
+      #- name: Restart PM2
+       #run: |
+        #  echo "${{ secrets.EC2_SSH_KEY }}" > ssh_key
+         # chmod 600 ssh_key
+          #ssh -o StrictHostKeyChecking=no -i ssh_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'pm2 restart all'
 
       - name: Clean up
         run: rm ssh_key
