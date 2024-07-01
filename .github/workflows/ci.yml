@@ -43,16 +43,16 @@ jobs:
           # Determine the target path and source based on keywords in the commit message
           if [[ "$COMMIT_MSG" == *"[automation]"* ]]; then
             TARGET_PATH="/home/ubuntu/automation"
-            SOURCE_PATH="path/to/automation/files/*"
+            SOURCE_PATH="home/ubuntu/automation/files/*"
           elif [[ "$COMMIT_MSG" == *"[fixed]"* ]]; then
             TARGET_PATH="/home/ubuntu/fixed"
-            SOURCE_PATH="path/to/fixed/files/*"
+            SOURCE_PATH="home/ubuntu/fixed/files/*"
           elif [[ "$COMMIT_MSG" == *"[flexi]"* ]]; then
             TARGET_PATH="/home/ubuntu/flexi"
-            SOURCE_PATH="path/to/flexi/files/*"
+            SOURCE_PATH="home/ubuntu/flexi/files/*"
           else
             TARGET_PATH="/home/ubuntu/default"
-            SOURCE_PATH="path/to/default/files/*"
+            SOURCE_PATH="home/ubuntu/default/files/*"
           fi
           
           echo "TARGET_PATH=$TARGET_PATH" >> $GITHUB_ENV
