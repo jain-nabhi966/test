@@ -3,102 +3,60 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - dev
   workflow_dispatch:
 
 jobs:
+  run-linters:
+    name: Run Linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3.3.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: '16.17.0'
+
+      # ESLint and Prettier must be in `package.json`
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          eslint: true
+          prettier: false
+
   build-and-deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
+    needs: run-linters
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: '16.17.0'
+
       - name: Install Dependencies
         run: npm install
-
-      - name: Run Linter
-        run: npm run lint
 
       - name: Check for Circular Dependencies
         run: npm run check-circular-deps
 
-      - name: Build Project
-        run: npm run build
-
-      - name: List Build Directory
-        run: ls -alh ./
-
-      - name: Parse Commit Message
-        id: parse_commit
-        run: |
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-          echo "Commit message: $COMMIT_MSG"
-          
-          if [[ "$COMMIT_MSG" == *"[automation]"* ]]; then
-            TARGET_PATH="/home/ubuntu/automation"
-            SOURCE_PATH="automation"
-          elif [[ "$COMMIT_MSG" == *"[fixed]"* ]]; then
-            TARGET_PATH="/home/ubuntu/fixed"
-            SOURCE_PATH="fixed"
-          elif [[ "$COMMIT_MSG" == *"[flexi]"* ]]; then
-            TARGET_PATH="/home/ubuntu/flexi"
-            SOURCE_PATH="flexi"
-          elif [[ "$COMMIT_MSG" == *"[sip]"* ]]; then
-            TARGET_PATH="/home/ubuntu/sip"
-            SOURCE_PATH="sip"
-          else
-            TARGET_PATH="/home/ubuntu/default"
-            SOURCE_PATH=""
-          fi
-          
-          echo "TARGET_PATH=$TARGET_PATH" >> $GITHUB_ENV
-          echo "SOURCE_PATH=$SOURCE_PATH" >> $GITHUB_ENV
-
       - name: Deploy to EC2
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > ssh_key
-          chmod 600 ssh_key
-          if [ -n "${{ env.SOURCE_PATH }}" ]; then
-            scp -o StrictHostKeyChecking=no -i ssh_key -r ${{ env.SOURCE_PATH }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ env.TARGET_PATH }}
-            ssh -o StrictHostKeyChecking=no -i ssh_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'pm2 restart all'
-          else
-            echo "SOURCE_PATH is empty, skipping deployment."
-          fi
-
-      - name: Clean up
-        run: rm ssh_key
-
-      - name: Send mail on failure
-        if: failure()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job failed
-          to: mrjain1701@gmail.com
-          from: Lendbox
-          body: |
-            Build job of jain-nabhi966/test failed. Please check the CI/CD pipeline logs for details.
-
-      - name: Send mail on success
-        if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Github Actions job succeeded
-          to: mrjain1701@gmail.com
-          from: Lendbox
-          body: |
-            Build job of jain-nabhi966/test succeeded.
+          ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            cd /home/lendbox/automation-node
+            ls -al
+            git pull
+            npm install
+            pm2 reload automation
+          ' 
