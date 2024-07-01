@@ -52,7 +52,7 @@ jobs:
             SOURCE_PATH="home/ubuntu/flexi/files/*"
           else
             TARGET_PATH="/home/ubuntu/default"
-            SOURCE_PATH="home/ubuntu/default/files/*"
+            SOURCE_PATH="home/ubuntu/files/*"
           fi
           
           echo "TARGET_PATH=$TARGET_PATH" >> $GITHUB_ENV
