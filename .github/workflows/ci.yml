@@ -19,15 +19,12 @@ jobs:
         uses: actions/setup-node@v3.6.0
         with:
           node-version: '16.17.0'
-
-      # ESLint and Prettier must be in `package.json`
       - name: Install Node.js dependencies
         run: npm install
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           eslint: true
           prettier: false
 
@@ -54,10 +51,9 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-            cd /home/lendbox/automation-node
+            cd /home/ubuntu/myapp
             ls -al
             git pull
             npm install
             pm2 reload automation
           ' 
-#end
