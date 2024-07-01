@@ -47,7 +47,7 @@ jobs:
             SOURCE_PATH="fixed"
           elif [[ "$COMMIT_MSG" == *"[flexi]"* ]]; then
             TARGET_PATH="/home/ubuntu/flexi"
-            SOURCE_PATH="flexi
+            SOURCE_PATH="flexi"
           elif [[ "$COMMIT_MSG" == *"[sip]"* ]]; then
             TARGET_PATH="/home/ubuntu/sip"
             SOURCE_PATH="sip"
