@@ -41,23 +41,30 @@ jobs:
           
           if [[ "$COMMIT_MSG" == *"[automation]"* ]]; then
             TARGET_PATH="/home/ubuntu/automation"
+            SOURCE_PATH="automation"
           elif [[ "$COMMIT_MSG" == *"[fixed]"* ]]; then
             TARGET_PATH="/home/ubuntu/fixed"
+            SOURCE_PATH="fixed"
           elif [[ "$COMMIT_MSG" == *"[flexi]"* ]]; then
             TARGET_PATH="/home/ubuntu/flexi"
+            SOURCE_PATH="flexi"
           else
             TARGET_PATH="/home/ubuntu/default"
+            SOURCE_PATH=""
           fi
           
           echo "TARGET_PATH=$TARGET_PATH" >> $GITHUB_ENV
+          echo "SOURCE_PATH=$SOURCE_PATH" >> $GITHUB_ENV
 
       - name: Deploy to EC2
         uses: easingthemes/ssh-deploy@main
+        with:
+          source: ${{ env.SOURCE_PATH }}
+          target: ${{ env.TARGET_PATH }}
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           REMOTE_HOST: ${{ secrets.EC2_HOST }}
           REMOTE_USER: ${{ secrets.EC2_USER }}
-          TARGET: ${{ env.TARGET_PATH }}
 
       - name: Send mail on failure
         if: failure()
