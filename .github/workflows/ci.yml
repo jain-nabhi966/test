@@ -4,56 +4,38 @@ on:
   push:
     branches:
       - dev
+ 
   workflow_dispatch:
 
 jobs:
-  run-linters:
-    name: Run Linters
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3.3.0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3.6.0
-        with:
-          node-version: '16.17.0'
-      - name: Install Node.js dependencies
-        run: npm install
-
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          eslint: true
-          prettier: false
-
   build-and-deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
-    needs: run-linters
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3.6.0
-        with:
-          node-version: '16.17.0'
-
       - name: Install Dependencies
         run: npm install
+
+      - name: Run Linter
+        run: npm run lint
 
       - name: Check for Circular Dependencies
         run: npm run check-circular-deps
 
+      - name: Build Project
+        run: npm run build
+
+      - name: List Build Directory
+        run: ls -alh ./
+
       - name: Deploy to EC2
-        run: |
-          ssh -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-            cd /home/ubuntu/myapp
-            ls -al
-            git pull
-            npm install
-            pm2 reload automation
-          ' 
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ EC2_SSH_KEY }}
+          SOURCE: "./"
+          REMOTE_HOST: ${{ EC2_HOST }}
+          REMOTE_USER: ${{ EC2_USER }}
+          TARGET: "/home/ubuntu/files"
